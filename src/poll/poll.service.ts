@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PollOptionEntity } from 'src/database/poll-option.entity';
 import { PollEntity } from 'src/database/poll.entity';
+import { UserEntity } from 'src/database/user.entity';
 import { Repository } from 'typeorm';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
@@ -13,7 +14,9 @@ export class PollService {
     @InjectRepository(PollEntity)
     private readonly pollRepository: Repository<PollEntity>,
     @InjectRepository(PollOptionEntity)
-    private readonly optionRepo: Repository<PollOptionEntity>,
+    private readonly optionRepository: Repository<PollOptionEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async create(poll: Poll) {
@@ -25,7 +28,7 @@ export class PollService {
     pollEntity = await this.pollRepository.save(pollEntity)
 
     // save it's options
-    await this.optionRepo.save(poll.options.map((each) => {
+    await this.optionRepository.save(poll.options.map((each) => {
       let optionEntity = new PollOptionEntity()
       optionEntity.poll = pollEntity
       optionEntity.title = each
@@ -39,7 +42,7 @@ export class PollService {
     return `This action returns all poll`;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, userId: string) {
     const poll = await this.pollRepository.findOne(id, {relations: ['options']})
     if (!poll) {
       throw new NotFoundException('Poll does not exist')
@@ -55,7 +58,16 @@ export class PollService {
     return `This action removes a #${id} poll`;
   }
 
-  async getPoll(id: number) {
-    return await this.pollRepository.findOne(id);
+  async vote(pollId: string, optionId: string, userId: string) {
+    let option = this.optionRepository.findOne(optionId)
+    let poll = this.pollRepository.findOne(pollId)
+    let user = this.userRepository.findOne(userId)
+
+     const [optionEntity, pollEntity, userEntity] = await Promise.all([option, poll, user])
+     if (optionEntity && pollEntity && userEntity) {
+      
+     } else {
+       throw new NotFoundException('Poll or User or Option not found')
+     }
   }
 }
