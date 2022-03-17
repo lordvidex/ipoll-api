@@ -1,4 +1,6 @@
+import ShortUniqueId from 'short-unique-id';
 import {
+  BeforeInsert,
   Column,
   Entity,
   JoinTable,
@@ -12,7 +14,7 @@ import { PollEntity } from './poll.entity';
 
 @Entity('ipoll_users')
 export class UserEntity {
-  @PrimaryColumn()
+  @PrimaryColumn({ nullable: false })
   id: string;
 
   @Column({ default: 'anonymous' })
