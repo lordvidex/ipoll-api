@@ -67,8 +67,8 @@ export class PollService {
     optionId: string,
     userId: string,
   ): Promise<PollEntity> {
-    let option = this.optionRepository.findOne(optionId);
-    let poll = this.pollRepository.findOne(pollId);
+    let option = this.optionRepository.findOne(optionId, {relations: ['votes']});
+    let poll = this.pollRepository.findOne(pollId, {relations: ['participants']});
     let user = this.userRepository.findOne(userId);
 
     const [optionEntity, pollEntity, userEntity] = await Promise.all([

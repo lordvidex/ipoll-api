@@ -43,9 +43,9 @@ export class PollController {
     return await this.pollService.findOne(id, userId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePollDto: UpdatePollDto) {}
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updatePollDto: UpdatePollDto) {}
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {}
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {}
 }

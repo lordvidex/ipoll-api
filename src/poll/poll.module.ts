@@ -5,13 +5,14 @@ import { DatabaseModule } from 'src/database/database.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PollEntity } from 'src/database/poll.entity';
 import { PollOptionEntity } from 'src/database/poll-option.entity';
+import { UserEntity } from 'src/database/user.entity';
 
 @Module({
   controllers: [PollController],
   providers: [PollService],
   imports: [
     DatabaseModule,
-    TypeOrmModule.forFeature([PollEntity, PollOptionEntity]),
+    TypeOrmModule.forFeature([PollEntity, PollOptionEntity, UserEntity]),
   ],
 })
 export class PollModule {}

@@ -9,6 +9,7 @@ import {
   OneToMany,
   PrimaryColumn,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { PollEntity } from './poll.entity';
 import { UserEntity } from './user.entity';
@@ -21,12 +22,12 @@ export class PollOptionEntity {
   @Column()
   title: string;
 
-  @ManyToMany(() => UserEntity, (user) => user.chosenOptions, {
-    eager: true,
-    cascade: true,
-  })
+  @ManyToMany(() => UserEntity, (user) => user.chosenOptions)
   @JoinTable()
   votes: UserEntity[];
+
+  @RelationId('votes')
+  votesId: string[]
 
   @ManyToOne(() => PollEntity, (poll) => poll.options)
   poll: PollEntity;
