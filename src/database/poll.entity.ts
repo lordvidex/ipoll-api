@@ -1,7 +1,15 @@
-import { BeforeInsert, Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
-import { PollOptionEntity } from "./poll-option.entity";
-import { UserEntity } from "./user.entity";
-import ShortUniqueId from 'short-unique-id'
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
+import { PollOptionEntity } from './poll-option.entity';
+import { UserEntity } from './user.entity';
+import ShortUniqueId from 'short-unique-id';
 
 @Entity('ipoll_polls')
 export class PollEntity {
@@ -11,20 +19,20 @@ export class PollEntity {
   @Column()
   title: string;
 
-  @Column()
-  author: string;
+  @ManyToOne(() => UserEntity, user => user.createdPolls)
+  author: UserEntity;
 
-  @OneToMany(() => PollOptionEntity, option => option.poll)
-  options: PollOptionEntity[]
+  @OneToMany(() => PollOptionEntity, (option) => option.poll)
+  options: PollOptionEntity[];
 
-  @OneToMany(() => UserEntity, user => user.participatedPolls)
-  participants: UserEntity[]
+  @ManyToMany(() => UserEntity, (user) => user.participatedPolls)
+  participants: UserEntity[];
 
-  @Column({name: 'is_anonymous', default: true })
-  isAnonymous: boolean
+  @Column({ name: 'is_anonymous', default: true })
+  isAnonymous: boolean;
 
   @BeforeInsert()
   private insertId() {
-    this.id = new ShortUniqueId({length: 8})()
+    this.id = new ShortUniqueId({ length: 8 })();
   }
 }

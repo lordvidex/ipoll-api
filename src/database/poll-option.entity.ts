@@ -3,6 +3,8 @@ import {
   BeforeInsert,
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryColumn,
@@ -19,7 +21,11 @@ export class PollOptionEntity {
   @Column()
   title: string;
 
-  @OneToMany(() => UserEntity, (user) => user.chosenOptions, { eager: true })
+  @ManyToMany(() => UserEntity, (user) => user.chosenOptions, {
+    eager: true,
+    cascade: true,
+  })
+  @JoinTable()
   votes: UserEntity[];
 
   @ManyToOne(() => PollEntity, (poll) => poll.options)

@@ -21,21 +21,23 @@ export class PollService {
 
   async create(poll: Poll) {
     // save the poll
-    let pollEntity = new PollEntity()
-    pollEntity.author = poll.author
-    pollEntity.isAnonymous = poll.anonymous 
-    pollEntity.title = poll.title
-    pollEntity = await this.pollRepository.save(pollEntity)
+    let pollEntity = new PollEntity();
+    pollEntity.author = await this.userRepository.findOne(poll.author);
+    pollEntity.isAnonymous = poll.anonymous;
+    pollEntity.title = poll.title;
+    pollEntity = await this.pollRepository.save(pollEntity); // saved
 
     // save it's options
-    await this.optionRepository.save(poll.options.map((each) => {
-      let optionEntity = new PollOptionEntity()
-      optionEntity.poll = pollEntity
-      optionEntity.title = each
-      return optionEntity
-    }))
+    await this.optionRepository.save(
+      poll.options.map((each) => {
+        let optionEntity = new PollOptionEntity();
+        optionEntity.poll = pollEntity;
+        optionEntity.title = each;
+        return optionEntity;
+      }),
+    ); // saved options
 
-    return await this.pollRepository.findOne(pollEntity.id)
+    return await this.pollRepository.findOne(pollEntity.id);
   }
 
   findAll() {
@@ -43,11 +45,13 @@ export class PollService {
   }
 
   async findOne(id: string, userId: string) {
-    const poll = await this.pollRepository.findOne(id, {relations: ['options']})
+    const poll = await this.pollRepository.findOne(id, {
+      relations: ['options'],
+    });
     if (!poll) {
-      throw new NotFoundException('Poll does not exist')
+      throw new NotFoundException('Poll does not exist');
     }
-    return poll
+    return poll;
   }
 
   update(id: number, updatePollDto: UpdatePollDto) {
@@ -58,16 +62,32 @@ export class PollService {
     return `This action removes a #${id} poll`;
   }
 
-  async vote(pollId: string, optionId: string, userId: string) {
-    let option = this.optionRepository.findOne(optionId)
-    let poll = this.pollRepository.findOne(pollId)
-    let user = this.userRepository.findOne(userId)
+  async vote(
+    pollId: string,
+    optionId: string,
+    userId: string,
+  ): Promise<PollEntity> {
+    let option = this.optionRepository.findOne(optionId);
+    let poll = this.pollRepository.findOne(pollId);
+    let user = this.userRepository.findOne(userId);
 
-     const [optionEntity, pollEntity, userEntity] = await Promise.all([option, poll, user])
-     if (optionEntity && pollEntity && userEntity) {
-      
-     } else {
-       throw new NotFoundException('Poll or User or Option not found')
-     }
+    const [optionEntity, pollEntity, userEntity] = await Promise.all([
+      option,
+      poll,
+      user,
+    ]);
+
+    if (optionEntity && pollEntity && userEntity) {
+      pollEntity.participants.push(userEntity);
+      optionEntity.votes.push(userEntity);
+
+      await Promise.all([
+        this.optionRepository.save(optionEntity),
+        this.pollRepository.save(pollEntity),
+      ]);
+      return await this.findOne(pollEntity.id, userEntity.id);
+    } else {
+      throw new NotFoundException('Poll or User or Option not found');
+    }
   }
 }
