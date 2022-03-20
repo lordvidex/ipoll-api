@@ -11,6 +11,7 @@ import { PollEntity } from '../database/poll.entity';
 @Injectable()
 @WebSocketGateway({
   namespace: 'live',
+  allowEIO3: true,
 })
 export class VoteGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
