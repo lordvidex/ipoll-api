@@ -3,22 +3,23 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   Headers,
   UseGuards,
 } from '@nestjs/common';
 import { PollService } from './poll.service';
 import { CreatePollDto } from './dto/create-poll.dto';
-import { UpdatePollDto } from './dto/update-poll.dto';
 import { Poll } from './poll.model';
 import { AuthGuard } from './auth.guard';
+import { VoteGateway } from './vote.gateway';
 
 @Controller('poll')
 @UseGuards(AuthGuard)
 export class PollController {
-  constructor(private readonly pollService: PollService) {}
+  constructor(
+    private readonly pollService: PollService,
+    private readonly voteGateWay: VoteGateway,
+  ) {}
 
   @Post()
   async create(
@@ -35,7 +36,9 @@ export class PollController {
     @Param('optionId') optionId: string,
     @Headers('user_id') userId: string,
   ) {
-    return await this.pollService.vote(pollId, optionId, userId);
+    const poll = await this.pollService.vote(pollId, optionId, userId);
+    this.voteGateWay.vote(poll);
+    return poll;
   }
 
   @Get(':id')

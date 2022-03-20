@@ -19,7 +19,7 @@ export class PollEntity {
   @Column()
   title: string;
 
-  @ManyToOne(() => UserEntity, user => user.createdPolls)
+  @ManyToOne(() => UserEntity, (user) => user.createdPolls)
   author: UserEntity;
 
   @OneToMany(() => PollOptionEntity, (option) => option.poll)

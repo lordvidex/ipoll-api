@@ -30,7 +30,7 @@ export class PollService {
     // save it's options
     await this.optionRepository.save(
       poll.options.map((each) => {
-        let optionEntity = new PollOptionEntity();
+        const optionEntity = new PollOptionEntity();
         optionEntity.poll = pollEntity;
         optionEntity.title = each;
         return optionEntity;
@@ -67,9 +67,13 @@ export class PollService {
     optionId: string,
     userId: string,
   ): Promise<PollEntity> {
-    let option = this.optionRepository.findOne(optionId, {relations: ['votes']});
-    let poll = this.pollRepository.findOne(pollId, {relations: ['participants']});
-    let user = this.userRepository.findOne(userId);
+    const option = this.optionRepository.findOne(optionId, {
+      relations: ['votes'],
+    });
+    const poll = this.pollRepository.findOne(pollId, {
+      relations: ['participants'],
+    });
+    const user = this.userRepository.findOne(userId);
 
     const [optionEntity, pollEntity, userEntity] = await Promise.all([
       option,
