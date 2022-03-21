@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import {
+  ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
@@ -19,19 +22,19 @@ export class VoteGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect(client: Socket) {
     console.log(`user ${client.id} disconnected`);
-    console.log(client.rooms);
   }
 
   async handleConnection(client: Socket, ...args: any[]) {
-    console.log(client);
-    console.log(args);
-    for (const arg of args) {
-      if (arg.room) {
-        await client.join(arg.room);
-        console.log(`Client ${client.id} joined room ${arg.room}`);
-        break;
-      }
-    }
+    console.log(`user ${client.id} connected with args ${args}`);
+  }
+
+  @SubscribeMessage('joinRoom')
+  async joinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: string,
+  ) {
+    await client.join(room);
+    console.log(`Client ${client.id} joined room ${room}`);
   }
 
   vote(poll: PollEntity) {
