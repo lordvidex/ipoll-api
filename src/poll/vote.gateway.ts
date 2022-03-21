@@ -35,8 +35,6 @@ export class VoteGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   vote(poll: PollEntity) {
-    console.log(`poll ${poll.id} broadcasted`);
-    const res = this.server.in(poll.id).emit('vote', poll);
-    console.log(`successfully meitted with ${res}`);
+    this.server.in(poll.id).emit('vote', poll);
   }
 }
