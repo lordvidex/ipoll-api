@@ -29,11 +29,9 @@ export class VoteGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('joinRoom')
-  async joinRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() room: string,
-  ) {
-    await client.join(room);
+  async joinRoom(@ConnectedSocket() client: Socket, @MessageBody() room: any) {
+    console.log(room);
+    // await client.join(room);
     console.log(`Client ${client.id} joined room ${room}`);
   }
 
