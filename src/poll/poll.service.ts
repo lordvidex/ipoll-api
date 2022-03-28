@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PollOptionEntity } from 'src/database/poll-option.entity';
 import { PollEntity } from 'src/database/poll.entity';
@@ -82,6 +86,14 @@ export class PollService {
     ]);
 
     if (optionEntity && pollEntity && userEntity) {
+      const query = userEntity.participatedPolls.find(
+        (poll) => poll.id === pollEntity.id,
+      );
+      if (query) {
+        // user has voted already
+        throw new NotAcceptableException('User has already voted');
+      }
+
       pollEntity.participants.push(userEntity);
       optionEntity.votes.push(userEntity);
 
