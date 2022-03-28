@@ -9,11 +9,11 @@ import { join } from 'path';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        // ssl: {
+        //   rejectUnauthorized: false,
+        // },
         url: configService.get('DATABASE_URL'),
-        entities: [join(__dirname, '**', '*.entity.{ts,js}')],
+        entities: [join(__dirname, '..', '**', '*.entity.{ts,js}')],
         synchronize: true,
       }),
     }),

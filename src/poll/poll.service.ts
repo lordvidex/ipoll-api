@@ -4,11 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PollOptionEntity } from 'src/database/poll-option.entity';
-import { PollEntity } from 'src/database/poll.entity';
-import { UserEntity } from 'src/database/user.entity';
+import { PollOptionEntity } from 'src/poll/entities/poll-option.entity';
+import { PollEntity } from './entities/poll.entity';
+import { UserEntity } from '../users/user.entity';
 import { Repository } from 'typeorm';
-import { CreatePollDto } from './dto/create-poll.dto';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { Poll } from './poll.model';
 

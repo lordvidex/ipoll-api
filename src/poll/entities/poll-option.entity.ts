@@ -12,7 +12,7 @@ import {
   RelationId,
 } from 'typeorm';
 import { PollEntity } from './poll.entity';
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../../users/user.entity';
 
 @Entity('ipoll_options')
 export class PollOptionEntity {

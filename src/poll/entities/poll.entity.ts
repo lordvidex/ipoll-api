@@ -8,7 +8,7 @@ import {
   PrimaryColumn,
 } from 'typeorm';
 import { PollOptionEntity } from './poll-option.entity';
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../../users/user.entity';
 import ShortUniqueId from 'short-unique-id';
 
 @Entity('ipoll_polls')

@@ -9,7 +9,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { PollEntity } from '../database/poll.entity';
+import { PollEntity } from './entities/poll.entity';
 
 @Injectable()
 @WebSocketGateway({

@@ -6,8 +6,8 @@ import {
   OneToMany,
   PrimaryColumn,
 } from 'typeorm';
-import { PollOptionEntity } from './poll-option.entity';
-import { PollEntity } from './poll.entity';
+import { PollOptionEntity } from '../poll/entities/poll-option.entity';
+import { PollEntity } from '../poll/entities/poll.entity';
 
 @Entity('ipoll_users')
 export class UserEntity {
