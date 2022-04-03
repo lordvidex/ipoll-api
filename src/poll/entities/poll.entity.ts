@@ -1,6 +1,7 @@
 import {
   BeforeInsert,
   Column,
+  CreateDateColumn,
   Entity,
   ManyToMany,
   ManyToOne,
@@ -30,6 +31,15 @@ export class PollEntity {
 
   @Column({ name: 'is_anonymous', default: true })
   isAnonymous: boolean;
+
+  @Column({ name: 'has_time', default: false })
+  hasTimeLimit: boolean;
+
+  @Column({ name: 'start_time', default: new Date(), type: 'timestamp with time zone' })
+  startTime: Date;
+
+  @Column({ name: 'end_time', nullable: true, type: 'timestamp with time zone' })
+  endTime?: Date;
 
   @BeforeInsert()
   private insertId() {

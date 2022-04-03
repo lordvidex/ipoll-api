@@ -28,6 +28,10 @@ export class PollService {
     pollEntity.author = await this.userRepository.findOne(poll.author);
     pollEntity.isAnonymous = poll.anonymous;
     pollEntity.title = poll.title;
+    pollEntity.hasTimeLimit = poll.hasTime;
+    pollEntity.startTime = new Date(poll.startTime);
+    pollEntity.endTime = poll.endTime == null ? null : new Date(poll.endTime);
+
     pollEntity = await this.pollRepository.save(pollEntity); // saved
 
     // save it's options
@@ -85,6 +89,15 @@ export class PollService {
     ]);
 
     if (optionEntity && pollEntity && userEntity) {
+      // check if the poll has expired
+      if (
+        pollEntity.hasTimeLimit &&
+        pollEntity.endTime != null &&
+        new Date() >= pollEntity.endTime
+      ) {
+        throw new NotAcceptableException('Vote cannot be counted because Poll has expired')
+      }
+      
       const query = userEntity.participatedPolls.find(
         (poll) => poll.id === pollEntity.id,
       );
