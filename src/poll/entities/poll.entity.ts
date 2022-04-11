@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
+  RelationId,
 } from 'typeorm';
 import { PollOptionEntity } from './poll-option.entity';
 import { UserEntity } from '../../users/user.entity';
@@ -22,6 +23,9 @@ export class PollEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.createdPolls)
   author: UserEntity;
+
+  @RelationId('author')
+  authorId: string;
 
   @OneToMany(() => PollOptionEntity, (option) => option.poll)
   options: PollOptionEntity[];

@@ -1,2 +1,2 @@
-POST http://localhost:3000/v1/poll/gAYcqTF9/MvNljmDa
+GET http://localhost:3000/v1/poll/gAYcqTF9
 user_id: 12345
