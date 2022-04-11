@@ -6,12 +6,14 @@ import {
   Param,
   Headers,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { PollService } from './poll.service';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { Poll } from './poll.model';
 import { AuthGuard } from './auth.guard';
 import { VoteGateway } from './vote.gateway';
+import { UpdatePollDto } from './dto/update-poll.dto';
 
 @Controller('poll')
 @UseGuards(AuthGuard)
@@ -46,8 +48,14 @@ export class PollController {
     return await this.pollService.findOne(id, userId);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updatePollDto: UpdatePollDto) {}
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Headers('user_id') userId: string,
+    @Body() updatePollDto: UpdatePollDto,
+  ) {
+    return await this.pollService.update(id, userId, updatePollDto);
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {}

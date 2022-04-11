@@ -1,11 +1,22 @@
-import { IsBoolean, IsDateString, IsOptional, IsString, ValidateIf } from "class-validator";
+import {
+  IsArray,
+  IsBoolean,
+  IsDateString,
+  IsInstance,
+  IsOptional,
+  IsString,
+  ValidateIf,
+  ValidateNested,
+} from 'class-validator';
+import { PollOptionDto } from './poll-option.dto';
 
 export class CreatePollDto {
   @IsString()
   title: string;
-  
-  @IsString({each: true})
-  options: string[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  options: PollOptionDto[];
 
   @IsOptional()
   @IsBoolean()
@@ -14,12 +25,11 @@ export class CreatePollDto {
   @IsBoolean()
   hasTime: boolean;
 
-  @ValidateIf(obj => obj.hasTime)
+  @ValidateIf((obj) => obj.hasTime)
   @IsDateString()
   startTime?: string;
 
-  @ValidateIf(obj => obj.hasTime)
+  @ValidateIf((obj) => obj.hasTime)
   @IsDateString()
   endTime?: string;
-
 }

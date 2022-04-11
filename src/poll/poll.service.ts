@@ -39,7 +39,7 @@ export class PollService {
       poll.options.map((each) => {
         const optionEntity = new PollOptionEntity();
         optionEntity.poll = pollEntity;
-        optionEntity.title = each;
+        optionEntity.title = each.title;
         return optionEntity;
       }),
     ); // saved options
@@ -61,8 +61,27 @@ export class PollService {
     return poll;
   }
 
-  update(id: number, updatePollDto: UpdatePollDto) {
-    return `This action updates a #${id} poll`;
+  async update(id: string, userId: string, updatePollDto: UpdatePollDto) {
+    const poll = await this.findOne(id, userId);
+    const { anonymous, endTime, hasTime, options, title } =
+      updatePollDto;
+      poll.isAnonymous = anonymous ?? poll.isAnonymous;
+      poll.hasTimeLimit = hasTime ?? poll.hasTimeLimit;
+      if (poll.hasTimeLimit) {
+        poll.endTime = (endTime == null ? null : new Date(endTime)) ?? poll.endTime;
+      }
+      poll.title = title ?? poll.title;
+      await this.pollRepository.save(poll); // save poll
+
+      const result = await Promise.all(options.map(async option => {
+       const opt = await this.optionRepository.findOne(option.id) ?? new PollOptionEntity()
+       opt.title = option.title
+       opt.poll = poll
+       return opt 
+      }))
+      await this.optionRepository.save(result) // save it's options
+      return await this.findOne(id, userId) // return 
+      
   }
 
   remove(id: number) {
@@ -95,9 +114,11 @@ export class PollService {
         pollEntity.endTime != null &&
         new Date() >= pollEntity.endTime
       ) {
-        throw new NotAcceptableException('Vote cannot be counted because Poll has expired')
+        throw new NotAcceptableException(
+          'Vote cannot be counted because Poll has expired',
+        );
       }
-      
+
       const query = userEntity.participatedPolls.find(
         (poll) => poll.id === pollEntity.id,
       );
