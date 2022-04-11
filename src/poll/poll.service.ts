@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotAcceptableException,
   NotFoundException,
@@ -67,9 +68,13 @@ export class PollService {
       updatePollDto;
       poll.isAnonymous = anonymous ?? poll.isAnonymous;
       poll.hasTimeLimit = hasTime ?? poll.hasTimeLimit;
-      if (poll.hasTimeLimit) {
+      if (hasTime && endTime == null) {
+        throw new BadRequestException('endTime must be provided if hasTimeLimit');
+      }
+      if (hasTime) {
         poll.endTime = (endTime == null ? null : new Date(endTime)) ?? poll.endTime;
       }
+      
       poll.title = title ?? poll.title;
       await this.pollRepository.save(poll); // save poll
 
