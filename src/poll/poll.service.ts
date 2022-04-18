@@ -23,7 +23,7 @@ export class PollService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async create(poll: Poll) {
+  async create(poll: Poll, userId: string) {
     // save the poll
     let pollEntity = new PollEntity();
     pollEntity.author = await this.userRepository.findOne(poll.author);
@@ -45,7 +45,7 @@ export class PollService {
       }),
     ); // saved options
 
-    return await this.pollRepository.findOne(pollEntity.id);
+    return await this.findOne(pollEntity.id, userId);
   }
 
   findAll() {
@@ -53,9 +53,13 @@ export class PollService {
   }
 
   async findOne(id: string, userId: string) {
-    const poll = await this.pollRepository.findOne(id, {
-      relations: ['options'],
-    });
+    const poll = await this.pollRepository
+      .createQueryBuilder('poll')
+      .where('poll.id=:id', { id })
+      .innerJoinAndSelect('poll.author', 'author')
+      .innerJoinAndSelect('poll.options', 'options')
+      .getOne();
+
     if (!poll) {
       throw new NotFoundException('Poll does not exist');
     }
@@ -64,29 +68,32 @@ export class PollService {
 
   async update(id: string, userId: string, updatePollDto: UpdatePollDto) {
     const poll = await this.findOne(id, userId);
-    const { anonymous, endTime, hasTime, options, title } =
-      updatePollDto;
-      poll.isAnonymous = anonymous ?? poll.isAnonymous;
-      poll.hasTimeLimit = hasTime ?? poll.hasTimeLimit;
-      if (hasTime && endTime == null) {
-        throw new BadRequestException('endTime must be provided if hasTimeLimit');
-      }
-      if (hasTime) {
-        poll.endTime = (endTime == null ? null : new Date(endTime)) ?? poll.endTime;
-      }
-      
-      poll.title = title ?? poll.title;
-      await this.pollRepository.save(poll); // save poll
+    const { anonymous, endTime, hasTime, options, title } = updatePollDto;
+    poll.isAnonymous = anonymous ?? poll.isAnonymous;
+    poll.hasTimeLimit = hasTime ?? poll.hasTimeLimit;
+    if (hasTime && endTime == null) {
+      throw new BadRequestException('endTime must be provided if hasTimeLimit');
+    }
+    if (hasTime) {
+      poll.endTime =
+        (endTime == null ? null : new Date(endTime)) ?? poll.endTime;
+    }
 
-      const result = await Promise.all(options.map(async option => {
-       const opt = await this.optionRepository.findOne(option.id) ?? new PollOptionEntity()
-       opt.title = option.title
-       opt.poll = poll
-       return opt 
-      }))
-      await this.optionRepository.save(result) // save it's options
-      return await this.findOne(id, userId) // return 
-      
+    poll.title = title ?? poll.title;
+    await this.pollRepository.save(poll); // save poll
+
+    const result = await Promise.all(
+      options.map(async (option) => {
+        const opt =
+          (await this.optionRepository.findOne(option.id)) ??
+          new PollOptionEntity();
+        opt.title = option.title;
+        opt.poll = poll;
+        return opt;
+      }),
+    );
+    await this.optionRepository.save(result); // save it's options
+    return await this.findOne(id, userId); // return
   }
 
   remove(id: number) {

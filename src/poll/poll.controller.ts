@@ -29,7 +29,7 @@ export class PollController {
     @Headers('user_id') userId: string,
   ) {
     const poll = new Poll(createDto, userId);
-    return await this.pollService.create(poll);
+    return await this.pollService.create(poll, userId);
   }
 
   @Post(':id/:optionId')
