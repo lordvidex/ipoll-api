@@ -12,6 +12,7 @@ export class UsersService {
   ) {}
 
   async registerUser(createDto: UserCreateDto) {
+    console.log(createDto);
     // try to login i.e. if user already exists before
     const result = await this.findUser(createDto.user_id);
     if (result) {
@@ -36,6 +37,6 @@ export class UsersService {
   }
 
   private async findUser(id: string): Promise<UserEntity> {
-    return this.userRepository.findOne(id);
+    return await this.userRepository.findOne(id);
   }
 }
