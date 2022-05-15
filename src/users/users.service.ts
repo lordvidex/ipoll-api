@@ -16,7 +16,7 @@ export class UsersService {
     // try to login i.e. if user already exists before
     const result = await this.findUser(createDto.user_id);
     if (result) {
-      throw new ConflictException('User already exists')
+      return await this.loginUser(createDto.user_id);
     } else {
       // create a new user
       let userEntity = new UserEntity();
