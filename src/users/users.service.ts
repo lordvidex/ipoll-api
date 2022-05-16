@@ -12,7 +12,6 @@ export class UsersService {
   ) {}
 
   async registerUser(createDto: UserCreateDto) {
-    console.log(createDto);
     // try to login i.e. if user already exists before
     const result = await this.findUser(createDto.user_id);
     if (result) {

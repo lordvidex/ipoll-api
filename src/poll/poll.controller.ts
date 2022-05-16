@@ -28,6 +28,7 @@ export class PollController {
     @Body() createDto: CreatePollDto,
     @Headers('user_id') userId: string,
   ) {
+    console.log(createDto);
     const poll = new Poll(createDto, userId);
     return await this.pollService.create(poll, userId);
   }
