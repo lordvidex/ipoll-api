@@ -30,9 +30,10 @@ export class PollService {
     pollEntity.isAnonymous = poll.anonymous;
     pollEntity.title = poll.title;
     pollEntity.hasTimeLimit = poll.hasTime;
-    pollEntity.startTime = new Date(poll.startTime);
-    pollEntity.endTime = poll.endTime == null ? null : new Date(poll.endTime);
-
+    if (poll.hasTime) {
+      pollEntity.startTime = new Date(poll.startTime);
+      pollEntity.endTime = poll.endTime == null ? null : new Date(poll.endTime);
+    }
     pollEntity = await this.pollRepository.save(pollEntity); // saved
 
     // save it's options
