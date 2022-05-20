@@ -80,7 +80,6 @@ export class PollService {
     if (poll.isAnonymous) {
       option.votes = [];
     }
-    console.log(option);
     return {
       id: option.id,
       title: option.title,
