@@ -80,16 +80,17 @@ export class PollService {
     if (poll.isAnonymous) {
       option.votes = [];
     }
+    console.log(option);
     return {
       id: option.id,
       title: option.title,
-      votes: option.votes.map((ussr) => {
+      votes: option.votes.map((user) => {
         return {
-          id: ussr.id ?? 'id',
-          name: ussr.name ?? 'Anonymous',
+          id: user.id ?? 'id',
+          name: user.name ?? 'Anonymous',
         };
       }),
-      pollId: option.poll.id,
+      pollId: poll.id,
       votesId: option.votesId,
     };
   }
