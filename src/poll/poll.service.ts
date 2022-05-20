@@ -67,6 +67,15 @@ export class PollService {
     return poll;
   }
 
+  async getOptionDetails(pollId: string, optionId: string, userId: string): Promise<PollOptionEntity> {
+    const poll = await this.pollRepository.findOne(pollId);
+    const option = await this.optionRepository.findOne(optionId);
+    if (poll.isAnonymous) {
+      option.votes = [];
+    }
+    return option;
+  }
+
   async update(id: string, userId: string, updatePollDto: UpdatePollDto) {
     const poll = await this.findOne(id, userId);
     const { anonymous, endTime, hasTime, options, title } = updatePollDto;

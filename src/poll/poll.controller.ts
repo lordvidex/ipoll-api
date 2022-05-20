@@ -43,6 +43,15 @@ export class PollController {
     return poll;
   }
 
+  @Get(':id/:optionId')
+  async getPollOption(
+    @Param('id') pollId: string,
+    @Param('optionId') optionId: string,
+    @Headers('user_id') userId: string,
+  ) {
+    return await this.pollService.getOptionDetails(pollId, optionId, userId);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string, @Headers('user_id') userId: string) {
     return await this.pollService.findOne(id, userId);
