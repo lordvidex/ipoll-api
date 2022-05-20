@@ -69,7 +69,7 @@ export class PollService {
 
   async getOptionDetails(pollId: string, optionId: string, userId: string): Promise<PollOptionEntity> {
     const poll = await this.pollRepository.findOne(pollId);
-    const option = await this.optionRepository.findOne(optionId);
+    const option = await this.optionRepository.findOne(optionId, {relations: ['votes']});
     if (poll.isAnonymous) {
       option.votes = [];
     }
