@@ -11,6 +11,7 @@ import { UserEntity } from '../users/user.entity';
 import { Repository } from 'typeorm';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { Poll } from './poll.model';
+import { OptionVotersDto } from './dto/option-voters.dto';
 
 @Injectable()
 export class PollService {
@@ -67,13 +68,28 @@ export class PollService {
     return poll;
   }
 
-  async getOptionDetails(pollId: string, optionId: string, userId: string): Promise<PollOptionEntity> {
+  async getOptionDetails(
+    pollId: string,
+    optionId: string,
+    userId: string,
+  ): Promise<OptionVotersDto> {
     const poll = await this.pollRepository.findOne(pollId);
-    const option = await this.optionRepository.findOne(optionId, {relations: ['votes']});
+    const option = await this.optionRepository.findOne(optionId, {
+      relations: ['votes'],
+    });
     if (poll.isAnonymous) {
       option.votes = [];
     }
-    return option;
+    return {
+      id: option.id,
+      title: option.title,
+      votes: option.votes.map((user) => ({
+        id: user.id,
+        name: user.name,
+      })),
+      pollId: option.poll.id,
+      votesId: option.votesId,
+    };
   }
 
   async update(id: string, userId: string, updatePollDto: UpdatePollDto) {
