@@ -83,10 +83,13 @@ export class PollService {
     return {
       id: option.id,
       title: option.title,
-      votes: option.votes.map((user) => ({
-        id: user.id,
-        name: user.name,
-      })),
+      votes: option.votes.map((user) => {
+        console.log(user);
+        return {
+          id: user.id,
+          name: user.name ?? 'Anonymous',
+        };
+      }),
       pollId: option.poll.id,
       votesId: option.votesId,
     };
