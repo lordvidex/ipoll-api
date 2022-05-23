@@ -14,16 +14,18 @@ export class UsersService {
   async registerUser(createDto: UserCreateDto) {
     // try to login i.e. if user already exists before
     const result = await this.findUser(createDto.user_id);
+    let userEntity: UserEntity;
     if (result) {
-      return await this.loginUser(createDto.user_id);
+      userEntity = await this.loginUser(createDto.user_id);
     } else {
       // create a new user
-      let userEntity = new UserEntity();
+      userEntity = new UserEntity();
+    }
       userEntity.id = createDto.user_id;
-      userEntity.name = createDto.name;
+      userEntity.name = createDto.name ?? userEntity.name;
       userEntity = await this.userRepository.save(userEntity);
       return await this.findUser(userEntity.id);
-    }
+    
   }
 
   async loginUser(id: string): Promise<UserEntity> {
