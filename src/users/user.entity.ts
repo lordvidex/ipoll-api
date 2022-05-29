@@ -15,7 +15,10 @@ export class UserEntity {
   id: string;
 
   @Column({ default: 'anonymous' })
-  name?: string;
+  name: string;
+
+  @Column()
+  email?: string;
 
   @ManyToMany(() => PollEntity, (poll) => poll.participants, { eager: true })
   @JoinTable()
