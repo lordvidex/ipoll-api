@@ -14,9 +14,11 @@ import { Poll } from './poll.model';
 import { AuthGuard } from './auth.guard';
 import { VoteGateway } from './vote.gateway';
 import { UpdatePollDto } from './dto/update-poll.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('poll')
 @UseGuards(AuthGuard)
+@ApiTags('poll')
 export class PollController {
   constructor(
     private readonly pollService: PollService,
